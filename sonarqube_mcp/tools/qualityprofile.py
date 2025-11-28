@@ -1,5 +1,6 @@
-from typing import Optional, Dict, Any
-from server import mcp, sonar_client
+from typing import Annotated, Optional, Dict, Any
+from pydantic import Field
+from sonarqube_mcp.server import mcp, sonar_client
 
 
 @mcp.tool(
@@ -8,9 +9,16 @@ Associate a quality profile with a project in SonarQube.
 """
 )
 async def add_quality_profile_project(
-    language: str,
-    project_key: str,
-    quality_profile: str,
+    language: Annotated[
+        str,
+        Field(description="Programming language of the profile (e.g., 'java', 'py')."),
+    ],
+    project_key: Annotated[
+        str, Field(description="Key of the project (e.g., 'my_project').")
+    ],
+    quality_profile: Annotated[
+        str, Field(description="Name of the quality profile (e.g., 'Sonar way').")
+    ],
 ):
     """Associates a quality profile with a project in SonarQube.
 
@@ -35,9 +43,16 @@ Remove a quality profile association from a project in SonarQube.
 """
 )
 async def remove_quality_profile_project(
-    language: str,
-    project_key: str,
-    quality_profile: str,
+    language: Annotated[
+        str,
+        Field(description="Programming language of the profile (e.g., 'java', 'py')."),
+    ],
+    project_key: Annotated[
+        str, Field(description="Key of the project (e.g., 'my_project').")
+    ],
+    quality_profile: Annotated[
+        str, Field(description="Name of the quality profile (e.g., 'Sonar way').")
+    ],
 ):
     """Removes a quality profile association from a project in SonarQube.
 
@@ -62,9 +77,16 @@ Retrieve SonarQube quality profiles.
 """
 )
 async def get_quality_profiles(
-    defaults: bool = False,
-    language: Optional[str] = None,
-    project_key: Optional[str] = None,
+    defaults: Annotated[
+        bool, Field(description="If true, return default profiles only.")
+    ] = False,
+    language: Annotated[
+        Optional[str],
+        Field(description="Filter by programming language (e.g., 'java', 'py')."),
+    ] = None,
+    project_key: Annotated[
+        Optional[str], Field(description="Filter by project key.")
+    ] = None,
 ) -> Dict[str, Any]:
     """Search for quality profiles in SonarQube.
 

@@ -36,17 +36,25 @@ Ask your AI Agent to:
 | `SONARQUBE_PASSWORD`     | SonarQube Password             | `None`                    |
 | `SONARQUBE_ORGANIZATION` | SonarQube organization name    | `None`                    |
 
-### Install Dependencies
+## Installation
+
+### Install from source
 
 ```bash
 # Clone the repository
-git clone https://github.com/nggocnn/sonarqube_mcp.git
-cd sonarqube_mcp
+git clone https://github.com/nggocnn/sonarqube-mcp.git
+cd sonarqube-mcp
 
-# Install dependencies
-pip install -r requirements.txt
-# or
+# Install the package
+pip install .
+# or using uv
 uv pip install .
+```
+
+### Install from PyPI (once published)
+
+```bash
+pip install sonarqube-mcp
 ```
 
 ## Integration
@@ -57,9 +65,26 @@ The MCP Server supports the following transport methods: `stdio`, `sse`, or `str
 
 ```json
 "sonarqube_stdio": {
+    "command": "sonarqube-mcp",
+    "args": [
+        "--transport",
+        "stdio"
+    ],
+    "env": {
+        "SONARQUBE_URL": "<sonarqube_url>",
+        "SONARQUBE_TOKEN": "<sonarqube_token>"
+    }
+}
+```
+
+Alternatively, you can use the Python module directly:
+
+```json
+"sonarqube_stdio": {
     "command": "python",
     "args": [
-        "src/__main__.py",
+        "-m",
+        "sonarqube_mcp",
         "--transport",
         "stdio"
     ],
@@ -76,11 +101,10 @@ The MCP Server supports the following transport methods: `stdio`, `sse`, or `str
 export SONARQUBE_URL="<sonarqube_url>"
 export SONARQUBE_TOKEN="<sonarqube_token>"
 
-python src/__main__.py --transport sse
+sonarqube-mcp --transport sse
 
-# or
-
-uv run python src/__main__.py --transport sse
+# or using the Python module
+python -m sonarqube_mcp --transport sse
 ```
 
 ```json
@@ -88,6 +112,27 @@ uv run python src/__main__.py --transport sse
     "type": "sse",
     "url": "http://127.0.0.1:8000/sse"
 }
+```
+
+## Configuration Validation
+
+Check your configuration and test the connection:
+
+```bash
+sonarqube-mcp --check-config
+```
+
+This will:
+- Validate all required environment variables are set
+- Test the connection to your SonarQube server
+- Display the current configuration status
+
+## Usage
+
+View all available options and environment variables:
+
+```bash
+sonarqube-mcp --help
 ```
 
 ## Testing

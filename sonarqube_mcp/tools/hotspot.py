@@ -1,5 +1,6 @@
-from typing import Optional, Dict, Any
-from server import mcp, sonar_client
+from typing import Annotated, Optional, Dict, Any
+from pydantic import Field
+from sonarqube_mcp.server import mcp, sonar_client
 
 
 @mcp.tool(
@@ -8,13 +9,28 @@ Retrieve security hotspots in a SonarQube project.
 """
 )
 async def get_project_hotspots(
-    project_key: str,
-    file_paths: Optional[str] = None,
-    only_mine: Optional[bool] = None,
-    page: int = 1,
-    page_size: int = 20,
-    resolution: Optional[str] = None,
-    status: Optional[str] = None,
+    project_key: Annotated[
+        str, Field(description="Key of the project (e.g., 'my_project').")
+    ],
+    file_paths: Annotated[
+        Optional[str],
+        Field(description="Comma-separated file paths to filter hotspots."),
+    ] = None,
+    only_mine: Annotated[
+        Optional[bool],
+        Field(description="If true, return only user's assigned hotspots."),
+    ] = None,
+    page: Annotated[int, Field(description="Page number for pagination.", ge=1)] = 1,
+    page_size: Annotated[
+        int, Field(description="Number of hotspots per page (max 20).", ge=1, le=20)
+    ] = 20,
+    resolution: Annotated[
+        Optional[str],
+        Field(description="Filter by resolution: FIXED, SAFE, ACKNOWLEDGED."),
+    ] = None,
+    status: Annotated[
+        Optional[str], Field(description="Filter by status: TO_REVIEW, REVIEWED.")
+    ] = None,
 ) -> Dict[str, Any]:
     """Retrieve security hotspots in a SonarQube project.
 
@@ -50,7 +66,9 @@ async def get_project_hotspots(
 Retrieve details of a specific SonarQube security hotspot.
 """
 )
-async def get_hotspot_detail(hotspot_key: str):
+async def get_hotspot_detail(
+    hotspot_key: Annotated[str, Field(description="Key of the hotspot.")],
+):
     """Retrieve detailed information about a specific security hotspot.
 
     Provides details such as the hotspot's location, rule, and status.

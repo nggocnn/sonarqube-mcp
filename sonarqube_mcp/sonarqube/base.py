@@ -148,13 +148,8 @@ class SonarQubeBase:
             }
 
         try:
-            logger.info(f"Request args: {request_args}")
+            logger.debug(f"Request args: {request_args}")
             response = await self._session.request(**request_args)
-            logger.info(
-                f"Response content: {response.content}"
-                if response.content
-                else "Response is empty."
-            )
             response.raise_for_status()
 
             if raw_response:

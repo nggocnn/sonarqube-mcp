@@ -1,7 +1,19 @@
 import os
 import asyncio
+import logging
 from mcp.server.fastmcp import FastMCP
-from sonarqube import SonarQubeClient
+from sonarqube_mcp.sonarqube import SonarQubeClient
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S"
+)
+
+# Reduce httpx logging verbosity
+logging.getLogger("httpx").setLevel(logging.WARNING)
+logging.getLogger("httpcore").setLevel(logging.WARNING)
 
 mcp = FastMCP(name="SonarQube MCP Server", host="0.0.0.0")
 

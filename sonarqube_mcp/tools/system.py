@@ -1,5 +1,6 @@
-from typing import Dict, Any
-from server import mcp, sonar_client
+from typing import Annotated, Dict, Any
+from pydantic import Field
+from sonarqube_mcp.server import mcp, sonar_client
 
 
 @mcp.tool(

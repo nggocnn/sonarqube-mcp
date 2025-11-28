@@ -1,13 +1,14 @@
 {
     "mcpServers": {
         "sonarqube_stdio": {
-            "command": "python",
+            "command": "sonarqube-mcp",
             "args": [
-                "src/__main__.py"
+                "--transport",
+                "stdio"
             ],
             "env": {
-                "SONARQUBE_URL": "",
-                "SONARQUBE_TOKEN": ""
+                "SONARQUBE_URL": "http://localhost:9000",
+                "SONARQUBE_TOKEN": "<your-token-here>"
             }
         },
         "sonarqube_sse": {
@@ -15,19 +16,19 @@
             "url": "http://127.0.0.1:8000/sse"
         },
         "sonarqube_docker": {
-        "command": "docker",
-        "args": [
-            "run",
-            "--rm",
-            "--name",
-            "sonarqube_mcp_server",
-            "-i",
-            "-e",
-            "SONARQUBE_URL=",
-            "-e",
-            "SONARQUBE_TOKEN=",
-            "nggocnn:sonarqube_mcp_server"
-        ]
-        },
+            "command": "docker",
+            "args": [
+                "run",
+                "--rm",
+                "--name",
+                "sonarqube_mcp_server",
+                "-i",
+                "-e",
+                "SONARQUBE_URL=http://localhost:9000",
+                "-e",
+                "SONARQUBE_TOKEN=<your-token-here>",
+                "nggocnn/sonarqube-mcp:latest"
+            ]
+        }
     }
 }

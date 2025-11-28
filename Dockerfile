@@ -8,5 +8,6 @@ RUN pip install -r requirements.txt
 
 COPY . /app
 
+RUN pip install -e .
 
-CMD ["python", "src/__main__.py", "--transport", "sse"]
+CMD ["sonarqube-mcp", "--transport", "sse"]

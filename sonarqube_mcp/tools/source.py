@@ -1,5 +1,6 @@
-from typing import Optional, Dict, Any
-from server import mcp, sonar_client
+from typing import Annotated, Optional, Dict, Any
+from pydantic import Field
+from sonarqube_mcp.server import mcp, sonar_client
 
 
 @mcp.tool(
@@ -8,10 +9,21 @@ Retrieve source code for a file in a SonarQube project.
 """
 )
 async def get_source(
-    project_key: str,
-    file_path: str,
-    start: Optional[int] = None,
-    end: Optional[int] = None,
+    project_key: Annotated[
+        str, Field(description="Key of the project (e.g., 'my_project').")
+    ],
+    file_path: Annotated[
+        str,
+        Field(
+            description="Path to the file within the project (e.g., 'src/main.java')."
+        ),
+    ],
+    start: Annotated[
+        Optional[int], Field(description="Starting line number.", ge=1)
+    ] = None,
+    end: Annotated[
+        Optional[int], Field(description="Ending line number (>= start).", ge=1)
+    ] = None,
 ) -> Dict[str, Any]:
     """Retrieve source code for a file in a SonarQube project.
 
@@ -38,11 +50,27 @@ Retrieve SCM information for a file in a SonarQube project.
 """
 )
 async def get_scm_info(
-    project_key: str,
-    file_path: str,
-    start: Optional[int] = None,
-    end: Optional[int] = None,
-    commits_by_line: bool = False,
+    project_key: Annotated[
+        str, Field(description="Key of the project (e.g., 'my-project').")
+    ],
+    file_path: Annotated[
+        str,
+        Field(
+            description="Path to the file within the project (e.g., 'src/main.java')."
+        ),
+    ],
+    start: Annotated[
+        Optional[int], Field(description="Starting line number.", ge=1)
+    ] = None,
+    end: Annotated[
+        Optional[int], Field(description="Ending line number (>= start).", ge=1)
+    ] = None,
+    commits_by_line: Annotated[
+        bool,
+        Field(
+            description="If true, include commits per line; if false, group by commit."
+        ),
+    ] = False,
 ) -> Dict[str, Any]:
     """Retrieve SCM information for a file in a SonarQube project.
 
@@ -74,7 +102,17 @@ async def get_scm_info(
 Retrieve raw source code as plain text for a file in a SonarQube project.
 """
 )
-async def get_source_raw(project_key: str, file_path: str) -> str:
+async def get_source_raw(
+    project_key: Annotated[
+        str, Field(description="Key of the project (e.g., 'my_project').")
+    ],
+    file_path: Annotated[
+        str,
+        Field(
+            description="Path to the file within the project (e.g., 'src/main.java')."
+        ),
+    ],
+) -> str:
     """Retrieve raw source code as plain text for a file in a SonarQube project.
 
     Args:
@@ -94,7 +132,9 @@ async def get_source_raw(project_key: str, file_path: str) -> str:
 Retrieve code snippets for a specific SonarQube issue.
 """
 )
-async def get_source_issue_snippets(issue_key: str):
+async def get_source_issue_snippets(
+    issue_key: Annotated[str, Field(description="Key of the issue.")],
+):
     """Retrieve code snippets associated with a specific SonarQube issue.
 
     Provides source code snippets around the issue's location for context.
@@ -117,11 +157,22 @@ Retrieve issues, rule details, source code snippets, and full file source for a 
 """
 )
 async def get_file_issues_information(
-    project_key: str,
-    file_path: str,
-    include_source: bool = True,
-    page: int = 1,
-    page_size: int = 20,
+    project_key: Annotated[
+        str, Field(description="Key of the project (e.g., 'my_project').")
+    ],
+    file_path: Annotated[
+        str,
+        Field(
+            description="File path within the project (e.g., 'src/main/java/Example.java')."
+        ),
+    ],
+    include_source: Annotated[
+        bool, Field(description="Whether to include raw source code.")
+    ] = True,
+    page: Annotated[int, Field(description="Page number for pagination.", ge=1)] = 1,
+    page_size: Annotated[
+        int, Field(description="Number of issues per page (max 20).", ge=1, le=20)
+    ] = 20,
 ) -> Dict[str, Any]:
     """Retrieve issues, rule details, source code snippets, and full file source for a specific file in a SonarQube project.
 

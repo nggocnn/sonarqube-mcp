@@ -1,5 +1,6 @@
-from typing import Optional, Dict, Any
-from server import mcp, sonar_client
+from typing import Annotated, Optional, Dict, Any
+from pydantic import Field
+from sonarqube_mcp.server import mcp, sonar_client
 
 
 @mcp.tool(
@@ -8,11 +9,28 @@ Create a new SonarQube project.
 """
 )
 async def create_project(
-    project_name: str,
-    project_key: str,
-    main_branch: str = "main",
-    new_code_definition_type: Optional[str] = None,
-    new_code_definition_value: Optional[str] = None,
+    project_name: Annotated[
+        str, Field(description="Name of the project (max 500 characters).")
+    ],
+    project_key: Annotated[
+        str,
+        Field(
+            description="Unique key identifier for the project (max 400 characters)."
+        ),
+    ],
+    main_branch: Annotated[str, Field(description="Name of the main branch.")] = "main",
+    new_code_definition_type: Annotated[
+        Optional[str],
+        Field(
+            description="Type of new code definition: 'PREVIOUS_VERSION', 'NUMBER_OF_DAYS', 'REFERENCE_BRANCH'."
+        ),
+    ] = None,
+    new_code_definition_value: Annotated[
+        Optional[str],
+        Field(
+            description="Value for new code definition (number 1-90 for NUMBER_OF_DAYS)."
+        ),
+    ] = None,
 ) -> Dict[str, Any]:
     """Creates a new project in SonarQube.
 
@@ -44,11 +62,26 @@ Search for SonarQube projects with optional name or key filtering.
 """
 )
 async def get_projects(
-    projects: Optional[str] = None,
-    search: Optional[str] = None,
-    analyzed_before: Optional[str] = None,
-    page: int = 1,
-    page_size: int = 20,
+    projects: Annotated[
+        Optional[str],
+        Field(
+            description="Comma-separated list of project keys (e.g., 'proj1,proj2')."
+        ),
+    ] = None,
+    search: Annotated[
+        Optional[str],
+        Field(description="Partial project name or key to filter results."),
+    ] = None,
+    analyzed_before: Annotated[
+        Optional[str],
+        Field(
+            description="Filter projects with last analysis before this date (YYYY-MM-DD or YYYY-MM-DDThh:mm:ssZ)."
+        ),
+    ] = None,
+    page: Annotated[int, Field(description="Page number for pagination.", ge=1)] = 1,
+    page_size: Annotated[
+        int, Field(description="Number of projects per page (max 20).", ge=1, le=20)
+    ] = 20,
 ) -> Dict[str, Any]:
     """Search for projects in SonarQube, with optional filtering by name.
 
@@ -79,7 +112,12 @@ async def get_projects(
 List projects accessible to the authenticated user
 """
 )
-async def get_user_projects(page: int = 1, page_size: int = 20) -> Dict[str, Any]:
+async def get_user_projects(
+    page: Annotated[int, Field(description="Page number for pagination.", ge=1)] = 1,
+    page_size: Annotated[
+        int, Field(description="Number of projects per page (max 20).", ge=1, le=20)
+    ] = 20,
+) -> Dict[str, Any]:
     """Lists projects accessible to the authenticated user.
 
     Retrieves a paginated list of projects the user can administer.
@@ -100,7 +138,12 @@ async def get_user_projects(page: int = 1, page_size: int = 20) -> Dict[str, Any
 List projects the authenticated user can scan.
 """
 )
-async def get_user_scannable_projects(search: Optional[str] = None) -> Dict[str, Any]:
+async def get_user_scannable_projects(
+    search: Annotated[
+        Optional[str],
+        Field(description="Partial project name or key to filter results."),
+    ] = None,
+) -> Dict[str, Any]:
     """List projects the authenticated user has permission to scan.
 
     Retrieves a list of projects where the user can perform analysis (scanning).
@@ -121,10 +164,19 @@ List analyses for a SonarQube project with optional filters.
 """
 )
 async def get_project_analyses(
-    project_key: str,
-    category: Optional[str] = None,
-    page: int = 1,
-    page_size: int = 20,
+    project_key: Annotated[
+        str, Field(description="Key of the project (e.g., 'my_project').")
+    ],
+    category: Annotated[
+        Optional[str],
+        Field(
+            description="Event category filter: VERSION, OTHER, QUALITY_PROFILE, QUALITY_GATE, etc."
+        ),
+    ] = None,
+    page: Annotated[int, Field(description="Page number for pagination.", ge=1)] = 1,
+    page_size: Annotated[
+        int, Field(description="Number of analyses per page (max 20).", ge=1, le=20)
+    ] = 20,
 ):
     """List analyses for a specified SonarQube project, with optional filters.
 

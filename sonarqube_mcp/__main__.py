@@ -1,6 +1,6 @@
 import argparse
-from server import mcp
-from tools import *
+from sonarqube_mcp.server import mcp
+from sonarqube_mcp import tools
 
 
 def main():

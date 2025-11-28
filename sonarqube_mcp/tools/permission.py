@@ -1,5 +1,6 @@
-from typing import Optional, Dict, Any
-from server import mcp, sonar_client
+from typing import Annotated, Optional, Dict, Any
+from pydantic import Field
+from sonarqube_mcp.server import mcp, sonar_client
 
 
 @mcp.tool(
@@ -8,9 +9,19 @@ Assign a permission to a group for a specific project or globally.
 """
 )
 async def add_group_permission(
-    group_name: str,
-    permission: str,
-    project_key: Optional[str] = None,
+    group_name: Annotated[
+        str, Field(description="Name of the group to receive the permission.")
+    ],
+    permission: Annotated[
+        str,
+        Field(
+            description="Permission to grant (global: admin, gateadmin, etc.; project: admin, codeviewer, etc.)."
+        ),
+    ],
+    project_key: Annotated[
+        Optional[str],
+        Field(description="Project key for project-level permission; None for global."),
+    ] = None,
 ):
     """Grants a permission to a group for a specific project or globally.
 
@@ -35,9 +46,19 @@ Remove a permission from a group for a specific project or globally.
 """
 )
 async def remove_group_permission(
-    group_name: str,
-    permission: str,
-    project_key: Optional[str] = None,
+    group_name: Annotated[
+        str, Field(description="Name of the group to remove the permission from.")
+    ],
+    permission: Annotated[
+        str,
+        Field(
+            description="Permission to remove (global: admin, gateadmin, etc.; project: admin, codeviewer, etc.)."
+        ),
+    ],
+    project_key: Annotated[
+        Optional[str],
+        Field(description="Project key for project-level permission; None for global."),
+    ] = None,
 ):
     """Revokes a permission from a group for a specific project or globally.
 
@@ -62,9 +83,16 @@ List group permissions for a specific project or globally.
 """
 )
 async def get_group_permission(
-    project_key: Optional[str] = None,
-    page: int = 1,
-    page_size: int = 20,
+    project_key: Annotated[
+        Optional[str],
+        Field(
+            description="Project key to fetch permissions for; None for global permissions."
+        ),
+    ] = None,
+    page: Annotated[int, Field(description="Page number for pagination.", ge=1)] = 1,
+    page_size: Annotated[
+        int, Field(description="Number of results per page (max 20).", ge=1, le=20)
+    ] = 20,
 ) -> Dict[str, Any]:
     """Fetches a list of group permissions for a specific project or globally.
 
@@ -89,9 +117,19 @@ Assign a permission to a user for a specific project or globally.
 """
 )
 async def add_user_permission(
-    username: str,
-    permission: str,
-    project_key: Optional[str] = None,
+    username: Annotated[
+        str, Field(description="Name of the user to receive the permission.")
+    ],
+    permission: Annotated[
+        str,
+        Field(
+            description="Permission to grant (global: admin, gateadmin, etc.; project: admin, codeviewer, etc.)."
+        ),
+    ],
+    project_key: Annotated[
+        Optional[str],
+        Field(description="Project key for project-level permission; None for global."),
+    ] = None,
 ):
     """Grants a permission to a user for a specific project or globally.
 
@@ -116,9 +154,19 @@ Remove a permission from a user for a specific project or globally.
 """
 )
 async def remove_user_permission(
-    username: str,
-    permission: str,
-    project_key: Optional[str] = None,
+    username: Annotated[
+        str, Field(description="Name of the user to remove the permission from.")
+    ],
+    permission: Annotated[
+        str,
+        Field(
+            description="Permission to remove (global: admin, gateadmin, etc.; project: admin, codeviewer, etc.)."
+        ),
+    ],
+    project_key: Annotated[
+        Optional[str],
+        Field(description="Project key for project-level permission; None for global."),
+    ] = None,
 ):
     """Revokes a permission from a user for a specific project or globally.
 
@@ -143,9 +191,16 @@ List user permissions for a specific project or globally.
 """
 )
 async def get_user_permission(
-    project_key: Optional[str] = None,
-    page: int = 1,
-    page_size: int = 20,
+    project_key: Annotated[
+        Optional[str],
+        Field(
+            description="Project key to fetch permissions for; None for global permissions."
+        ),
+    ] = None,
+    page: Annotated[int, Field(description="Page number for pagination.", ge=1)] = 1,
+    page_size: Annotated[
+        int, Field(description="Number of results per page (max 20).", ge=1, le=20)
+    ] = 20,
 ) -> Dict[str, Any]:
     """Fetches a list of users permissions for a specific project or globally.
 

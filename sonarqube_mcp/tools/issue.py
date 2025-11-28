@@ -1,5 +1,6 @@
-from typing import Optional, Dict, Any
-from server import mcp, sonar_client
+from typing import Annotated, Optional, Dict, Any
+from pydantic import Field
+from sonarqube_mcp.server import mcp, sonar_client
 
 
 @mcp.tool(
@@ -8,21 +9,68 @@ Search for issues in SonarQube projects with detailed filters.
 """
 )
 async def get_issues(
-    additional_fields: Optional[str] = None,
-    assigned: Optional[bool] = None,
-    assignees: Optional[str] = None,
-    authors: Optional[str] = None,
-    components: Optional[str] = None,
-    issue_statuses: Optional[str] = None,
-    issues: Optional[str] = None,
-    page: int = 1,
-    page_size: int = 20,
-    resolutions: Optional[str] = None,
-    resolved: Optional[bool] = None,
-    scopes: Optional[str] = None,
-    severities: Optional[str] = None,
-    tags: Optional[str] = None,
-    types: Optional[str] = None,
+    additional_fields: Annotated[
+        Optional[str],
+        Field(
+            description="Comma-separated fields: _all, comments, languages, rules, etc."
+        ),
+    ] = None,
+    assigned: Annotated[
+        Optional[bool],
+        Field(description="True for assigned, False for unassigned issues."),
+    ] = None,
+    assignees: Annotated[
+        Optional[str],
+        Field(description="Comma-separated assignee logins (e.g., 'user1,__me__')."),
+    ] = None,
+    authors: Annotated[
+        Optional[str], Field(description="Comma-separated SCM author accounts.")
+    ] = None,
+    components: Annotated[
+        Optional[str],
+        Field(
+            description="Comma-separated component keys (project, module, directory, file)."
+        ),
+    ] = None,
+    issue_statuses: Annotated[
+        Optional[str],
+        Field(
+            description="Comma-separated statuses: OPEN, CONFIRMED, FALSE_POSITIVE, ACCEPTED, FIXED."
+        ),
+    ] = None,
+    issues: Annotated[
+        Optional[str], Field(description="Comma-separated issue keys.")
+    ] = None,
+    page: Annotated[int, Field(description="Page number for pagination.", ge=1)] = 1,
+    page_size: Annotated[
+        int, Field(description="Number of issues per page (max 20).", ge=1, le=20)
+    ] = 20,
+    resolutions: Annotated[
+        Optional[str],
+        Field(
+            description="Comma-separated resolutions: FALSE-POSITIVE, WONTFIX, FIXED, REMOVED."
+        ),
+    ] = None,
+    resolved: Annotated[
+        Optional[bool],
+        Field(description="True for resolved, False for unresolved issues."),
+    ] = None,
+    scopes: Annotated[
+        Optional[str], Field(description="Comma-separated scopes: MAIN, TEST.")
+    ] = None,
+    severities: Annotated[
+        Optional[str],
+        Field(
+            description="Comma-separated severities: INFO, MINOR, MAJOR, CRITICAL, BLOCKER."
+        ),
+    ] = None,
+    tags: Annotated[
+        Optional[str], Field(description="Comma-separated tags (e.g., 'security,bug').")
+    ] = None,
+    types: Annotated[
+        Optional[str],
+        Field(description="Comma-separated types: CODE_SMELL, BUG, VULNERABILITY."),
+    ] = None,
 ) -> Dict[str, Any]:
     """
     Search for issues in SonarQube projects with customizable filters.
@@ -77,7 +125,14 @@ Retrieve SCM authors of issues for a SonarQube project.
 """
 )
 async def get_issues_authors(
-    project_key: Optional[str] = None, page: int = 1, page_size: int = 20
+    project_key: Annotated[
+        Optional[str],
+        Field(description="Project key to filter authors (e.g., 'my_project')."),
+    ] = None,
+    page: Annotated[int, Field(description="Page number for pagination.", ge=1)] = 1,
+    page_size: Annotated[
+        int, Field(description="Number of authors per page (max 20).", ge=1, le=20)
+    ] = 20,
 ) -> Dict[str, Any]:
     """Retrieve SCM authors associated with issues in a SonarQube project.
 

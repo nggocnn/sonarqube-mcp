@@ -1,5 +1,6 @@
-from typing import Dict, Any
-from server import mcp, sonar_client
+from typing import Annotated, Dict, Any
+from pydantic import Field
+from sonarqube_mcp.server import mcp, sonar_client
 
 
 @mcp.tool(
@@ -23,7 +24,19 @@ async def get_metrics_type() -> Dict[str, Any]:
 Retrieve all available metrics in SonarQube with pagination.
 """
 )
-async def get_metrics(page: int = 1, page_size: int = 20) -> Dict[str, Any]:
+async def get_metrics(
+    page: Annotated[
+        int, Field(description="Page number for pagination (positive integer).", ge=1)
+    ] = 1,
+    page_size: Annotated[
+        int,
+        Field(
+            description="Number of metrics per page (positive integer, max 20).",
+            ge=1,
+            le=20,
+        ),
+    ] = 20,
+) -> Dict[str, Any]:
     """Retrieve all available metrics in SonarQube with pagination.
 
     Lists metrics (e.g., 'complexity') with details like name, type, and domain.

@@ -1,5 +1,6 @@
-from typing import Optional, Dict, Any
-from server import mcp, sonar_client
+from typing import Annotated, Optional, Dict, Any
+from pydantic import Field
+from sonarqube_mcp.server import mcp, sonar_client
 
 
 @mcp.tool(
@@ -23,7 +24,11 @@ async def get_quality_gates() -> Dict[str, Any]:
 Retrieve details of a specific SonarQube quality gate.
 """
 )
-async def get_quality_gates_details(name: str) -> Dict[str, Any]:
+async def get_quality_gates_details(
+    name: Annotated[
+        str, Field(description="Name of the quality gate (e.g., 'Sonar way').")
+    ],
+) -> Dict[str, Any]:
     """Retrieve detailed information about a specific quality gate in SonarQube.
 
     Includes conditions and thresholds defined in the quality gate.
@@ -43,7 +48,11 @@ async def get_quality_gates_details(name: str) -> Dict[str, Any]:
 Get the quality gate associated with a SonarQube project.
 """
 )
-async def get_quality_gates_by_project(project_key: str) -> Dict[str, Any]:
+async def get_quality_gates_by_project(
+    project_key: Annotated[
+        str, Field(description="Key of the project (e.g., 'my_project').")
+    ],
+) -> Dict[str, Any]:
     """Retrieve the quality gate associated with a specific SonarQube project.
 
     Returns the quality gate assigned to the project, if any.

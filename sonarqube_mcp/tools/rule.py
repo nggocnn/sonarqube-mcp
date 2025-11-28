@@ -1,5 +1,6 @@
-from typing import Optional, Dict, Any
-from server import mcp, sonar_client
+from typing import Annotated, Optional, Dict, Any
+from pydantic import Field
+from sonarqube_mcp.server import mcp, sonar_client
 
 
 @mcp.tool(
@@ -8,12 +9,31 @@ Retrieve SonarQube rules with optional filters.
 """
 )
 async def get_rules(
-    page: int = 1,
-    page_size: int = 20,
-    severities: Optional[str] = None,
-    statuses: Optional[str] = None,
-    languages: Optional[str] = None,
-    types: Optional[str] = None,
+    page: Annotated[int, Field(description="Page number for pagination.", ge=1)] = 1,
+    page_size: Annotated[
+        int, Field(description="Number of rules per page (max 20).", ge=1, le=20)
+    ] = 20,
+    severities: Annotated[
+        Optional[str],
+        Field(
+            description="Comma-separated severities: INFO, MINOR, MAJOR, CRITICAL, BLOCKER."
+        ),
+    ] = None,
+    statuses: Annotated[
+        Optional[str],
+        Field(
+            description="Comma-separated statuses: BETA, DEPRECATED, READY, REMOVED."
+        ),
+    ] = None,
+    languages: Annotated[
+        Optional[str], Field(description="Comma-separated languages (e.g., 'java,js').")
+    ] = None,
+    types: Annotated[
+        Optional[str],
+        Field(
+            description="Comma-separated types: CODE_SMELL, BUG, VULNERABILITY, SECURITY_HOTSPOT."
+        ),
+    ] = None,
 ) -> Dict[str, Any]:
     """Retrieve for rules in SonarQube.
 
@@ -47,7 +67,12 @@ async def get_rules(
 Retrieve details of a specific SonarQube rule.
 """
 )
-async def get_rule_details(rule_key: str, actives: bool = False) -> Dict[str, Any]:
+async def get_rule_details(
+    rule_key: Annotated[str, Field(description="Key of the rule.")],
+    actives: Annotated[
+        bool, Field(description="If true, include active quality profiles.")
+    ] = False,
+) -> Dict[str, Any]:
     """Retrieve detailed information about a specific SonarQube rule.
 
     Provides rule details, including description and active status in profiles if requested.
