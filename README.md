@@ -1,4 +1,4 @@
-SonarQube MCP Server
+# SonarQube MCP Server
 
 ## Overview
 
